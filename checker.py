@@ -5,8 +5,8 @@ import re
 from grab.spider import Spider, Task
 from grab import Grab
 
-#import logging
-#logging.basicConfig(level=logging.DEBUG)
+import logging
+logging.basicConfig(level=logging.DEBUG)
 
 threads = 1
 urls_file = 'urls.txt'
@@ -33,11 +33,12 @@ class CookieSpider(Spider):
         cookies = grab.response.cookies
 
         for cookie in cookies.iterkeys():
-            new_cookies = cookies
+            new_cookies = cookies.copy()
             new_cookies[cookie] += "'"
             grab = Grab()
             grab.setup(cookies=new_cookies)
             grab.setup(url=task.url)
+            print cookies, new_cookies
             self.add_task(Task('check', url=task.url, grab=grab, old_cookies=cookies, new_cookies=new_cookies))
 
 
@@ -76,9 +77,8 @@ def main():
     except KeyboardInterrupt: pass
 
     print 'All done'
-    #print bot.render_stats()
+    print bot.render_stats()
 
 if __name__ == '__main__':
     print 'Start working'
     main()
-
