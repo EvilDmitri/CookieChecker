@@ -1,2 +1,3 @@
-http://www.greenmaven.com/directory/
-http://www.greenmaven.com/directory/media/publishers/
+http://korphome.ru
+http://blog.korphome.ru/kinopoiskfavorites-server/
+http://blog.korphome.ru/tag/mac-os-x-server/
