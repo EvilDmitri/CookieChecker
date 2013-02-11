@@ -15,8 +15,6 @@ not_found_file = 'not_found.txt'
 
 class CookieSpider(Spider):
 
-    found = []
-    not_found = []
     errors = []
 
     def task_generator(self):
@@ -28,7 +26,7 @@ class CookieSpider(Spider):
                     grab = Grab()
                     grab.setup(url=str(url).rstrip('\n'))
                     print "Test in progress for the - ", url
-                    yield Task('initial', url=str(url), grab=grab, )
+                    yield Task('initial', url=str(url), grab=grab)
 
 
     def task_initial(self, grab, task):
@@ -44,15 +42,18 @@ class CookieSpider(Spider):
 
 
     def task_check(self, grab, task):
+        not_found = False
         raw_text = grab.xpath_text('//*')
         for error in self.errors:
             if re.findall(error, raw_text):
                 self.write_file(found_file, task.url+'-'+task.new_cookies)
             else:
-                if not task.url in self.not_found:
-                    self.not_found.append(task.url)
+                if not_found:
+                    pass
+                else:
+                    not_found = task.url
                 pass
-        if self.not_found:
+        if not_found:
             self.write_file(not_found_file, task.url)
 
     def write_file(self, file, url):
