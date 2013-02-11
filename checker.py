@@ -52,7 +52,6 @@ class CookieSpider(Spider):
                     pass
                 else:
                     not_found = task.url
-                pass
         if not_found:
             self.write_file(not_found_file, task.url)
 
@@ -82,6 +81,4 @@ def main():
 if __name__ == '__main__':
     print 'Start working'
     main()
-
-
 
