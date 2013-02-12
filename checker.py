@@ -23,7 +23,7 @@ class CookieSpider(Spider):
             for url in f:
                 if url.strip():
                     grab = Grab()
-                    grab.setup(url=url.rstrip('\n'))
+                    grab.setup(url=url)
                     print "Start checking the - ", url
                     yield Task('initial', url=url, grab=grab)
 
