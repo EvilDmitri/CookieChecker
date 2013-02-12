@@ -41,16 +41,13 @@ class CookieSpider(Spider):
 
 
     def task_check(self, grab, task):
-        not_found = False
+        not_found = ""
         raw_text = grab.xpath_text('//*').lower()
         for error in self.errors:
             if error in raw_text:
                 self.write_file(FOUND_FILE, task.url+'-'+task.new_cookies + error)
             else:
-                if not_found:
-                    pass
-                else:
-                    not_found = task.url
+               not_found = task.url
         if not_found:
             self.write_file(NOT_FOUND_FILE, task.url)
 
