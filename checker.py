@@ -3,8 +3,9 @@
 from grab.spider import Spider, Task
 from grab import Grab
 
-#import logging
-#logging.basicConfig(level=logging.DEBUG)
+import logging
+from grab.tools.logs import default_logging
+default_logging(level=logging.ERROR)
 
 THREADS = 1
 URLS_FILE = 'urls.txt'
