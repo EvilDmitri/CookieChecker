@@ -1,17 +1,15 @@
 # -*- coding: utf-8 -*-
 
-import re
-
 from grab.spider import Spider, Task
 from grab import Grab
 
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
-threads = 1
-urls_file = 'urls.txt'
-found_file = 'found.txt'
-not_found_file = 'not_found.txt'
+THREADS = 1
+URLS_FILE = 'urls.txt'
+FOUND_FILE = 'found.txt'
+NOT_FOUND_FILE = 'not_found.txt'
 
 class CookieSpider(Spider):
 
@@ -20,13 +18,13 @@ class CookieSpider(Spider):
     def task_generator(self):
         self.errors = prepare_errors()
 
-        with open(urls_file) as f:
+        with open(URLS_FILE) as f:
             for url in f:
                 if url.strip():
                     grab = Grab()
-                    grab.setup(url=str(url).rstrip('\n'))
+                    grab.setup(url=url.rstrip('\n'))
                     print "Test in progress for the - ", url
-                    yield Task('initial', url=str(url), grab=grab)
+                    yield Task('initial', url=url, grab=grab)
 
 
     def task_initial(self, grab, task):
@@ -44,17 +42,17 @@ class CookieSpider(Spider):
 
     def task_check(self, grab, task):
         not_found = False
-        raw_text = grab.xpath_text('//*')
+        raw_text = grab.xpath_text('//*').lower()
         for error in self.errors:
-            if re.findall(error, raw_text):
-                self.write_file(found_file, task.url+'-'+task.new_cookies)
+            if error in raw_text:
+                self.write_file(FOUND_FILE, task.url+'-'+task.new_cookies + error)
             else:
                 if not_found:
                     pass
                 else:
                     not_found = task.url
         if not_found:
-            self.write_file(not_found_file, task.url)
+            self.write_file(NOT_FOUND_FILE, task.url)
 
     def write_file(self, file, url):
         with open(file, 'a') as f:
@@ -65,16 +63,18 @@ def prepare_errors():
     errors = []
     with open('errors.txt') as f:
         for error in f:
-            errors.append(re.compile(error))
+            errors.append(error.lower())
     return errors
 
 
 def main():
 
-    bot = CookieSpider(thread_number=threads,network_try_limit=10)
+    bot = CookieSpider(thread_number=THREADS,network_try_limit=10)
 
-    try: bot.run()
-    except KeyboardInterrupt: pass
+    try:
+        bot.run()
+    except KeyboardInterrupt:
+        pass
 
     print 'All done'
     print bot.render_stats()
