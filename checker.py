@@ -22,7 +22,7 @@ class CookieSpider(Spider):
 
         with open(urls_file) as f:
             for url in f:
-                if url:
+                if url.strip():
                     grab = Grab()
                     grab.setup(url=str(url).rstrip('\n'))
                     print "Test in progress for the - ", url
