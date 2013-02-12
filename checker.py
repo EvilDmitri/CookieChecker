@@ -3,8 +3,8 @@
 from grab.spider import Spider, Task
 from grab import Grab
 
-import logging
-logging.basicConfig(level=logging.DEBUG)
+#import logging
+#logging.basicConfig(level=logging.DEBUG)
 
 THREADS = 1
 URLS_FILE = 'urls.txt'
@@ -23,7 +23,7 @@ class CookieSpider(Spider):
                 if url.strip():
                     grab = Grab()
                     grab.setup(url=url.rstrip('\n'))
-                    print "Test in progress for the - ", url
+                    print "Start checking the - ", url
                     yield Task('initial', url=url, grab=grab)
 
 
@@ -36,13 +36,13 @@ class CookieSpider(Spider):
             grab = Grab()
             grab.setup(cookies=new_cookies)
             grab.setup(url=task.url)
-            print cookies, new_cookies
+            self.print_changed_values(task.url, cookies, new_cookies)   # working statics
             self.add_task(Task('check', url=task.url, grab=grab, old_cookies=cookies, new_cookies=new_cookies))
 
 
     def task_check(self, grab, task):
         not_found = ""
-        raw_text = grab.xpath_text('//*').lower()
+        raw_text = grab.response.body.lower()      #grab.xpath_text('//*').lower()
         for error in self.errors:
             if error in raw_text:
                 self.write_file(FOUND_FILE, task.url+'-'+task.new_cookies + error)
@@ -54,6 +54,15 @@ class CookieSpider(Spider):
     def write_file(self, file, url):
         with open(file, 'a') as f:
             f.write(url+'\n')
+
+
+    def print_changed_values(self, url, cookies, new_cookies):
+        print '-------------'
+        print url
+        print 'Old cookies:'
+        print cookies
+        print 'New cookies:'
+        print new_cookies
 
 
 def prepare_errors():
